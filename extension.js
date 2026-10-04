@@ -3,6 +3,7 @@
 // optionally followed by :line and/or :line:col.
 const vscode = require('vscode');
 const path = require('path');
+const fs = require('fs');
 
 function activate(ctx) {
   // Negative lookbehind avoids matching inside URLs (http://...) or identifiers.
@@ -18,9 +19,18 @@ function activate(ctx) {
         const p = m[1];
         const line = m[2] ? parseInt(m[2], 10) : undefined;
         const col = m[3] ? parseInt(m[3], 10) : undefined;
-        // Only linkify things that look like files (have an extension) or directories.
+        // Only linkify things that look like files (have an extension), end with
+        // a slash, or (for dotless candidates) actually exist on disk as a file or directory.
         if (!/\.[A-Za-z0-9]{1,12}$/.test(p) && !p.endsWith('/') && !p.endsWith('\\')) {
-          continue;
+          let target = p;
+          if (!path.isAbsolute(p)) {
+            target = path.resolve(path.dirname(doc.uri.fsPath), p);
+          }
+          try {
+            fs.statSync(target);
+          } catch {
+            continue;
+          }
         }
         const start = doc.positionAt(m.index);
         const end = doc.positionAt(m.index + m[0].length);
@@ -52,6 +62,21 @@ function activate(ctx) {
         }
       }
       const uri = vscode.Uri.file(filePath);
+      // Directories cannot be opened as text documents; reveal them in the Explorer instead.
+      let st = null;
+      try {
+        st = fs.statSync(uri.fsPath);
+      } catch {}
+      if (st && st.isDirectory()) {
+        if (vscode.workspace.getWorkspaceFolder(uri)) {
+          // Inside an open workspace: locate/reveal it in the Explorer.
+          vscode.commands.executeCommand('revealInExplorer', uri);
+        } else {
+          // Outside the workspace: open the directory in a new window.
+          vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
+        }
+        return;
+      }
       const opts = { preview: false, preserveFocus: false };
       const openFailed = (e) =>
         vscode.window.showErrorMessage('Cannot open: ' + filePath + ' (' + e.message + ')');

@@ -74,6 +74,11 @@ Run the automated check:
 node tests/run-regex-test.js
 ```
 
+## Changelog
+
+- **0.1.1** - Link existing dotless file and directory paths (existence-based check); directory click reveals in the Explorer for in-workspace paths and opens the folder in a new window for out-of-workspace paths.
+- **0.1.0** - Initial release: clickable file paths with optional `:line` / `:line:col`.
+
 ## License
 
 MIT

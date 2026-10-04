@@ -1,22 +1,60 @@
 # File Path Linker test cases
-# This file lives in the tests/ directory; relative paths are resolved against tests/.
-# In code-server, Ctrl+Click each path. CASE 1 is the most basic pure absolute path case.
+#
+# This file lives in the tests/ directory; relative paths are resolved against
+# tests/ (the directory of the file being read). In code-server, Ctrl+Click each
+# path to verify the behavior described by the case comment.
+#
+# Note: the automated check mirrors only the regex (not the link/existence
+# filter), so positive cases here assert regex matching; click behavior
+# (open file / reveal in Explorer / open folder in new window) is verified
+# manually with Ctrl+Click.
 
-# CASE 1 (positive): pure absolute path without :line -> opens the file at the top
+# --- positive: absolute file paths ---
+
+# CASE 1: absolute path without :line -> opens the file at the top
 /etc/resolv.conf
 
-# CASE 2 (positive): absolute path with line and column
+# CASE 2: absolute path with :line:col -> opens at line 2, column 3
 /etc/resolv.conf:2:3
 
-# CASE 3 (positive): bare relative path, typical in logs and stack traces
-# A path inside a log-style line should be clickable
+# CASE 3: absolute path of a dotless existing file (existence-based link) -> opens
+/etc/hosts
+
+# --- positive: relative paths ---
+
+# CASE 4: bare relative path inside a log-style line -> opens the sibling file at line 1
 build warning: sample.txt:1
 
-# CASE 4 (positive): parent-relative path with line number
+# CASE 5: parent-relative path with :line -> opens the sibling file at line 10
 ../extension.js:10
 
-# CASE 5 (negative): unrecognized extension must NOT be linked
+# --- positive: directories ---
+# (since v0.1.1)
+
+# CASE 6: in-workspace absolute dir (trailing slash) -> reveals in Explorer
+/workspace/ws/dev-env/extension/path-click/file-path-link/tests/
+
+# CASE 7: in-workspace relative dir -> reveals in Explorer
+./target.dir/
+
+# CASE 8: in-workspace relative file inside a dir -> opens the file
+./target.dir/target.file
+
+# CASE 9: out-of-workspace absolute dir -> opens the folder in a new window
+/etc/apt/sources.list.d/
+
+# CASE 10: out-of-workspace absolute dir (root level) -> opens in a new window
+/etc/
+
+# --- negative: must NOT be linked ---
+
+# CASE 11: unrecognized extension
 src/main.xyz:10
 
-# CASE 6 (negative): version numbers must NOT be linked
+# CASE 12: version numbers
 v1.2.3
+
+# CASE 13: URLs are NOT opened as files by this extension (the lookbehind blocks them);
+# they can still be clickable via VS Code's built-in URL linker.
+https://example.com
+https://example.com/logs/app.js
