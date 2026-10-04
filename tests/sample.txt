@@ -1,0 +1,2 @@
+This is the jump target for the bare-relative test case (sample.txt:1).
+Line 1 is where the link should land.

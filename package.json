@@ -1,0 +1,15 @@
+{
+  "name": "file-path-linker",
+  "displayName": "File Path Linker",
+  "description": "Make file paths (with optional :line:col) clickable in any editor file",
+  "version": "0.1.0",
+  "publisher": "local",
+  "engines": { "vscode": "^1.70.0" },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "filePathLinker.open", "title": "Open File Path Link" }
+    ]
+  }
+}

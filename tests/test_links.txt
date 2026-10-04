@@ -1,0 +1,22 @@
+# File Path Linker test cases
+# This file lives in the tests/ directory; relative paths are resolved against tests/.
+# In code-server, Ctrl+Click each path. CASE 1 is the most basic pure absolute path case.
+
+# CASE 1 (positive): pure absolute path without :line -> opens the file at the top
+/etc/resolv.conf
+
+# CASE 2 (positive): absolute path with line and column
+/etc/resolv.conf:2:3
+
+# CASE 3 (positive): bare relative path, typical in logs and stack traces
+# A path inside a log-style line should be clickable
+build warning: sample.txt:1
+
+# CASE 4 (positive): parent-relative path with line number
+../extension.js:10
+
+# CASE 5 (negative): unrecognized extension must NOT be linked
+src/main.xyz:10
+
+# CASE 6 (negative): version numbers must NOT be linked
+v1.2.3
