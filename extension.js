@@ -91,7 +91,9 @@ function activate(ctx) {
           ed.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
         }, openFailed);
       } else {
-        vscode.window.showTextDocument(uri, opts).then(() => {}, openFailed);
+        // No line/col requested: open with the default editor so binary/media
+        // files (images, audio, video) open in their viewer instead of as text.
+        vscode.commands.executeCommand('vscode.open', uri).then(undefined, openFailed);
       }
     })
   );
