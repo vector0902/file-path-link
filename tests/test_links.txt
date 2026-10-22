@@ -46,7 +46,27 @@ build warning: sample.txt:1
 # CASE 10: out-of-workspace absolute dir (root level) -> opens in a new window
 /etc/
 
+# --- positive: path#anchor (since v0.1.2) ---
+
+# CASE 14: path#heading-token -> opens at the heading line
+./sample-anchor.txt#sec-one
+
+# CASE 15: path#item-token -> opens at the checklist item, not the prose mention
+./sample-anchor.txt#R-5
+
+# CASE 16: GitHub-style #L<n> -> opens at line n
+./sample-anchor.txt#L3
+
+# CASE 17: unknown anchor -> falls back to opening the file at the top
+./sample-anchor.txt#nope
+
+# CASE 18: :line wins over #anchor
+./sample-anchor.txt:5#sec-one
+
 # --- negative: must NOT be linked ---
+
+# CASE 19: URL with fragment is still not a file link
+https://example.com/docs/a.txt#sec-one
 
 # CASE 11: unrecognized extension
 src/main.xyz:10

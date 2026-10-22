@@ -13,6 +13,8 @@
 - 对所有语言生效（`*` 作用域）注册一个 `DocumentLinkProvider`。
 - 匹配绝对路径、相对路径（`./`、`../`）以及 Windows 盘符路径（`C:\...`）。
 - 支持可选的 `:行` 与 `:行:列` 后缀。
+- 支持可选的 `#锚点` 后缀：按文本 token 跳到标题行或清单条目行（因此不受行号漂移影响）；
+  `#L<n>` 直接当第 n 行；两者并存时 `:行` 优先。
 - 相对路径按**当前阅读文件所在目录**解析，而不是工作区根目录。
 - 用负向后行断言避免把 URL（`http://...`）或代码标识符误判成链接；只有带已知文件扩展名
   （或以 `/`、`\` 结尾的目录）才会被链接化。
@@ -47,7 +49,13 @@ cp package.json extension.js ~/.local/share/code-server/extensions/file-path-lin
 ./relative/file.py:7      按当前文件所在目录解析
 ../up/file.ts             父级相对路径
 C:\path\file.txt          Windows 盘符路径
+./docs/TODO#A5            跳到含 "A5" 的标题行 / 清单条目行
+./docs/TODO#L120          跳到第 120 行（GitHub 风格）
+./docs/TODO:36#A5         :行 优先，忽略 #A5
 ```
+
+锚点查找顺序：标题行 → `- [ ]` 条目行 → 首个包含该 token 的行；都找不到则打开文件顶部。
+匹配不区分大小写，也接受 slug 形式（空格转 `-`）。
 
 如果目标文件不存在，会提示报错信息。
 
@@ -55,7 +63,8 @@ C:\path\file.txt          Windows 盘符路径
 
 - `extension.js` 注册一个面向 `*` 语言作用域的文档链接提供器，并在 `provideDocumentLinks`
   时扫描全文中的路径-like 字符串。
-- 用单一正则完成匹配，并捕获可选的 `:行` 与 `:行:列`。
+- 用单一正则完成匹配，并捕获可选的 `:行`、`:行:列` 与 `#锚点`。
+- 点击时若带 `#锚点`，`findAnchorLine()` 读取目标文件（超过 5MB 跳过），按标题 → 条目 → 首个匹配定位。
 - 每个匹配生成一个 `command:filePathLinker.open?{...}` 链接；点击后由命令将相对路径按
   当前文件目录解析并打开目标，带行/列则跳过去。
 
@@ -64,17 +73,21 @@ C:\path\file.txt          Windows 盘符路径
 `tests/` 目录包含：
 
 - `run-regex-test.js` - 与生产正则保持一致的自动化校验，逐行报告匹配结果。
-- `test_links.txt` - 手动 Ctrl+点击用例（绝对路径、相对路径、负向用例）。
+- `anchor-resolve-test.js` - `findAnchorLine()` 单元测试（标题/条目优先级、slug、`#L<n>`、未知 token）。
+- `test_links.txt` - 手动 Ctrl+点击用例（绝对路径、相对路径、锚点、负向用例）。
 - `sample.txt` - 供裸相对路径用例跳转的小目标文件。
+- `sample-anchor.txt` - `#锚点` 用例的跳转目标。
 
 运行自动化校验：
 
 ```bash
 node tests/run-regex-test.js
+node tests/anchor-resolve-test.js
 ```
 
 ## 更新日志
 
+- **0.1.2** - `#锚点`：按文本 token 跳到标题行或清单条目行（`#L<n>` 表示第 n 行）；未知 token 回退到文件顶部。
 - **0.1.1** - 支持无扩展名但真实存在的文件/目录路径（按存在性校验）；目录点击：工作区内路径在资源管理器展开，工作区外路径在新窗口打开该目录。
 - **0.1.0** - 初版：文件路径（可带 `:行` / `:行:列`）可点击跳转。
 

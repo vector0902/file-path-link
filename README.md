@@ -13,6 +13,9 @@ become Ctrl+Click links that open the target file and jump to the given line (an
 - Registers a `DocumentLinkProvider` for every language (`*` scope).
 - Matches absolute paths, relative paths (`./`, `../`), and Windows drive paths (`C:\...`).
 - Optional `:line` and `:line:col` suffixes.
+- Optional `#anchor` suffix to jump to a heading or checklist item by token (resolved by
+  text, so it survives line-number drift); `#L<n>` is treated as a line number.
+  `:line` wins when both are present.
 - Relative paths are resolved against the directory of the file being read, not the workspace root.
 - A negative lookbehind prevents URLs (`http://...`) and code identifiers from being linked;
   only strings with a known file extension (or a trailing `/` or `\`) are linked.
@@ -47,7 +50,14 @@ Supported forms:
 ./relative/file.py:7       resolved against the current file's directory
 ../up/file.ts              parent-relative path
 C:\path\file.txt           Windows path
+./docs/TODO#A5             opens at the heading / checklist item containing "A5"
+./docs/TODO#L120           opens at line 120 (GitHub-style)
+./docs/TODO:36#A5          :line wins; #A5 is ignored
 ```
+
+Anchor lookup order: heading line, then `- [ ]` item line, then the first line containing
+the token. Unknown tokens fall back to opening the file at the top. Anchors are resolved
+case-insensitively and also accept a slug form (spaces become `-`).
 
 If the target does not exist, an error message is shown.
 
@@ -56,6 +66,8 @@ If the target does not exist, an error message is shown.
 - `extension.js` registers a document link provider for the `*` language scope and scans
   the document for path-like strings.
 - A single regex handles matching and captures an optional `:line` and `:line:col`.
+- An optional `#anchor` is captured too; on click, `findAnchorLine()` reads the target file
+  (skipped above 5 MB) and resolves heading -> item -> first match.
 - Each match is emitted as a `command:filePathLinker.open?{...}` link. Clicking the link
   runs the command, resolves relative paths against the current file's directory, and
   opens the target with the requested line/column.
@@ -65,17 +77,21 @@ If the target does not exist, an error message is shown.
 The `tests/` directory contains:
 
 - `run-regex-test.js` - automated check that mirrors the production regex and reports pass/fail per line.
-- `test_links.txt` - manual Ctrl+Click cases (absolute, relative, and negative cases).
+- `anchor-resolve-test.js` - unit test for `findAnchorLine()` (heading/item priority, slug, `#L<n>`, unknown token).
+- `test_links.txt` - manual Ctrl+Click cases (absolute, relative, anchor, and negative cases).
 - `sample.txt` - a small jump target used by the bare-relative test case.
+- `sample-anchor.txt` - jump target for the `#anchor` cases.
 
-Run the automated check:
+Run the automated checks:
 
 ```bash
 node tests/run-regex-test.js
+node tests/anchor-resolve-test.js
 ```
 
 ## Changelog
 
+- **0.1.2** - `#anchor` suffix: jump to a heading or checklist item by text token (`#L<n>` for a plain line); unknown tokens fall back to the top of the file.
 - **0.1.1** - Link existing dotless file and directory paths (existence-based check); directory click reveals in the Explorer for in-workspace paths and opens the folder in a new window for out-of-workspace paths.
 - **0.1.0** - Initial release: clickable file paths with optional `:line` / `:line:col`.
 

@@ -1,0 +1,10 @@
+# Sample anchors
+intro prose mentions R-5 before the real item
+
+## sec-one
+body of section one
+
+## sec-two
+- [ ] **R-5** stop watcher
+- [ ] **R-8** audit accounts
+body line mentioning R-5 again

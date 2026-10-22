@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 // MUST stay in sync with extension.js
-const RE = /(?<![A-Za-z0-9_./:])((?:\/[\w.\-]+)+|\.{1,2}\/[\w.\-\/]+|[A-Za-z0-9_][\w.\-\/]*\.(?:ts|tsx|js|jsx|mjs|cjs|py|go|java|rs|rb|c|cc|cpp|h|hpp|php|sh|bash|zsh|json|jsonc|md|markdown|yml|yaml|toml|txt|log|xml|html|htm|css|scss|less|sql|lua|pl|r|kt|swift|dart|gradle|vue|svelte|csv|ini|cfg|conf)|[A-Za-z]:\\[^\s:]+|\.\\[\w.\-\\]+)(?::(\d+))?(?::(\d+))?/g;
+const RE = /(?<![A-Za-z0-9_./:])((?:\/[\w.\-]+)+|\.{1,2}\/[\w.\-\/]+|[A-Za-z0-9_][\w.\-\/]*\.(?:ts|tsx|js|jsx|mjs|cjs|py|go|java|rs|rb|c|cc|cpp|h|hpp|php|sh|bash|zsh|json|jsonc|md|markdown|yml|yaml|toml|txt|log|xml|html|htm|css|scss|less|sql|lua|pl|r|kt|swift|dart|gradle|vue|svelte|csv|ini|cfg|conf)|[A-Za-z]:\\[^\s:]+|\.\\[\w.\-\\]+)(?::(\d+))?(?::(\d+))?(?:#([\w.\-]+))?/g;
 
 function shouldMatch(line) {
   if (/^[.\/]/.test(line)) return true; // absolute / ./ / ../
