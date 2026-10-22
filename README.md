@@ -59,7 +59,7 @@ C:\path\file.txt           Windows path
 Anchor lookup order: heading line, then `- [ ]` item line, then the first line containing
 the token. Unknown tokens fall back to opening the file at the top. Anchors are resolved
 case-insensitively and also accept a slug form (spaces become `-`). CJK tokens are matched
-literally, e.g. `./docs/TODO#待用户决定`.
+literally, e.g. `./docs/TODO#中文标题示例`.
 
 If the target does not exist, an error message is shown.
 
