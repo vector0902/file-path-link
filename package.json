@@ -2,7 +2,7 @@
   "name": "file-path-linker",
   "displayName": "File Path Linker",
   "description": "Make file paths (with optional :line:col or #anchor) clickable in any editor file",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "vector090",
   "engines": { "vscode": "^1.70.0" },
   "activationEvents": ["onStartupFinished"],

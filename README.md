@@ -93,6 +93,7 @@ node tests/anchor-resolve-test.js
 
 ## Changelog
 
+- **0.1.3** - `#anchor` tokens accept CJK characters (e.g. `./docs/TODO#出库`); the anchor test fixture now uses a neutral CJK heading. No other behavior change.
 - **0.1.2** - `#anchor` suffix: jump to a heading or checklist item by text token (`#L<n>` for a plain line); unknown tokens fall back to the top of the file.
 - **0.1.1** - Link existing dotless file and directory paths (existence-based check); directory click reveals in the Explorer for in-workspace paths and opens the folder in a new window for out-of-workspace paths.
 - **0.1.0** - Initial release: clickable file paths with optional `:line` / `:line:col`.
