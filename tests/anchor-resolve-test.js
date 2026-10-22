@@ -15,6 +15,7 @@ const cases = [
   ['item token, lower case', 'r-5', 8],
   ['second item token', 'R-8', 9],
   ['github-style L<n>', 'L3', 3],
+  ['cjk heading token', '待用户决定', 11],
   ['unknown token', 'nope', 0],
   ['empty token', '', 0],
 ];

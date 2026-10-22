@@ -15,6 +15,7 @@ become Ctrl+Click links that open the target file and jump to the given line (an
 - Optional `:line` and `:line:col` suffixes.
 - Optional `#anchor` suffix to jump to a heading or checklist item by token (resolved by
   text, so it survives line-number drift); `#L<n>` is treated as a line number.
+  Tokens may contain ASCII letters, digits, `.`, `-`, `_` and CJK characters.
   `:line` wins when both are present.
 - Relative paths are resolved against the directory of the file being read, not the workspace root.
 - A negative lookbehind prevents URLs (`http://...`) and code identifiers from being linked;
@@ -57,7 +58,8 @@ C:\path\file.txt           Windows path
 
 Anchor lookup order: heading line, then `- [ ]` item line, then the first line containing
 the token. Unknown tokens fall back to opening the file at the top. Anchors are resolved
-case-insensitively and also accept a slug form (spaces become `-`).
+case-insensitively and also accept a slug form (spaces become `-`). CJK tokens are matched
+literally, e.g. `./docs/TODO#待用户决定`.
 
 If the target does not exist, an error message is shown.
 

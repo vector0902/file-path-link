@@ -35,7 +35,7 @@ function activate(ctx) {
   const vscode = require('vscode');
   // Negative lookbehind avoids matching inside URLs (http://...) or identifiers.
   // Branches: absolute /abs, ./rel, ../rel, drive C:\, and bare relative name.ext (logs/stack traces).
-  const RE = /(?<![A-Za-z0-9_./:])((?:\/[\w.\-]+)+|\.{1,2}\/[\w.\-\/]+|[A-Za-z0-9_][\w.\-\/]*\.(?:ts|tsx|js|jsx|mjs|cjs|py|go|java|rs|rb|c|cc|cpp|h|hpp|php|sh|bash|zsh|json|jsonc|md|markdown|yml|yaml|toml|txt|log|xml|html|htm|css|scss|less|sql|lua|pl|r|kt|swift|dart|gradle|vue|svelte|csv|ini|cfg|conf)|[A-Za-z]:\\[^\s:]+|\.\\[\w.\-\\]+)(?::(\d+))?(?::(\d+))?(?:#([\w.\-]+))?/g;
+  const RE = /(?<![A-Za-z0-9_./:])((?:\/[\w.\-]+)+|\.{1,2}\/[\w.\-\/]+|[A-Za-z0-9_][\w.\-\/]*\.(?:ts|tsx|js|jsx|mjs|cjs|py|go|java|rs|rb|c|cc|cpp|h|hpp|php|sh|bash|zsh|json|jsonc|md|markdown|yml|yaml|toml|txt|log|xml|html|htm|css|scss|less|sql|lua|pl|r|kt|swift|dart|gradle|vue|svelte|csv|ini|cfg|conf)|[A-Za-z]:\\[^\s:]+|\.\\[\w.\-\\]+)(?::(\d+))?(?::(\d+))?(?:#([\w.\-\u4e00-\u9fa5]+))?/g;
 
   const provider = {
     provideDocumentLinks(doc, _token) {
